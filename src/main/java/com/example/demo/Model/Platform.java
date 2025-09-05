@@ -59,7 +59,6 @@ public class Platform {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", profileUrl='" + profileUrl + '\'' +
-                ", student=" + student +
                 '}';
     }
 

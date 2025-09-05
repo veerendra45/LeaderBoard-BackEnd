@@ -38,6 +38,3 @@ public class PlatformController {
     }
 
 }
-
-//https://leetcode.com/u/_veerendra_45/
-//https://www.geeksforgeeks.org/user/_veerendra_45/

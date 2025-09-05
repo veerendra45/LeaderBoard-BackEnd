@@ -1,7 +1,6 @@
 package com.example.demo.Model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -84,7 +83,6 @@ public class PlatformStats {
                 ", medium=" + medium +
                 ", hard=" + hard +
                 ", totalScore=" + totalScore +
-                ", student=" + student +
                 '}';
     }
 
@@ -99,4 +97,6 @@ public class PlatformStats {
         this.totalScore = totalScore;
         this.student = student;
     }
+
+
 }

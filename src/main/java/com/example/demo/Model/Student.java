@@ -10,7 +10,13 @@ import java.util.List;
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // primary key
+    private Long id;
+
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Column(nullable = true)
+    private String password;
 
     @Column(nullable = false)
     private String fullName;
@@ -36,12 +42,44 @@ public class Student {
     @JsonManagedReference
     private PlatformStats platformStats;
 
+    public Student() {
+    }
+
+    public Student(Long id, String email, String password, String fullName, String rollNumber, int year, String department, String profilePic, List<Platform> platforms, PlatformStats platformStats) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.fullName = fullName;
+        this.rollNumber = rollNumber;
+        this.year = year;
+        this.department = department;
+        this.profilePic = profilePic;
+        this.platforms = platforms;
+        this.platformStats = platformStats;
+    }
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getFullName() {
@@ -96,35 +134,23 @@ public class Student {
         return platformStats;
     }
 
-    public void setProblemStats(PlatformStats platformStats) {
+    public void setPlatformStats(PlatformStats platformStats) {
         this.platformStats = platformStats;
-    }
-
-    public Student(Long id, String fullName, String rollNumber, int year, String department, String profilePic, List<Platform> platforms, PlatformStats platformStats) {
-        this.id = id;
-        this.fullName = fullName;
-        this.rollNumber = rollNumber;
-        this.year = year;
-        this.department = department;
-        this.profilePic = profilePic;
-        this.platforms = platforms;
-        this.platformStats = platformStats;
-    }
-
-    public Student() {
     }
 
     @Override
     public String toString() {
         return "Student{" +
                 "id=" + id +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
                 ", fullName='" + fullName + '\'' +
                 ", rollNumber='" + rollNumber + '\'' +
                 ", year=" + year +
                 ", department='" + department + '\'' +
                 ", profilePic='" + profilePic + '\'' +
                 ", platforms=" + platforms +
-                ", problemStats=" + platformStats +
+                ", platformStats=" + platformStats +
                 '}';
     }
 }
