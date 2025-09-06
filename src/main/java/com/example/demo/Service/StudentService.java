@@ -6,6 +6,7 @@ import com.example.demo.Model.PlatformStats;
 import com.example.demo.Model.Student;
 import com.example.demo.Repository.PlatformRepo;
 import com.example.demo.Repository.StudentRepo;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,7 +33,9 @@ public class StudentService {
                 .orElseThrow(() -> new RuntimeException("Invalid Id Student not found"));
     }
 
+    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
     public Student saveStudent(Student student) {
+        student.setPassword(encoder.encode(student.getPassword()));
         return studentRepo.save(student);
     }
 
