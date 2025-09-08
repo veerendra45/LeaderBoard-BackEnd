@@ -1,11 +1,16 @@
 package com.example.demo.Service;
 
+import com.example.demo.Dto.LoginRequest;
 import com.example.demo.Dto.ProfileSubmissionRequest;
 import com.example.demo.Model.Platform;
 import com.example.demo.Model.PlatformStats;
 import com.example.demo.Model.Student;
 import com.example.demo.Repository.PlatformRepo;
 import com.example.demo.Repository.StudentRepo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +22,13 @@ public class StudentService {
     private final StudentRepo studentRepo;
     private final PlatformRepo platformRepo;
     private final PlatformStatsService platformStatsService;
+
+
+    @Autowired
+    private AuthenticationManager authManger;
+
+    @Autowired
+    private JWTService jwtService;
 
     StudentService(StudentRepo studentRepo, PlatformRepo platformRepo, PlatformStatsService platformStatsService){
         this.studentRepo = studentRepo;
@@ -67,9 +79,10 @@ public class StudentService {
         student.setProfilePic(request.getProfilePic());
 
         if(student.getPassword() == null){
-            student.setPassword("default@123");
+            student.setPassword(encoder.encode("default@123"));
+        } else {
+            student.setPassword(encoder.encode(student.getPassword()));
         }
-
         Student savedStudent = studentRepo.save(student);
 
         for (ProfileSubmissionRequest.PlatformRequest platformReq : request.getPlatforms()) {
@@ -83,5 +96,15 @@ public class StudentService {
         }
         return studentRepo.findById(savedStudent.getId()).orElseThrow(()
          -> new RuntimeException("Student not found"));
+    }
+
+    public String verify(LoginRequest loginInfo) {
+        Authentication authentication =
+                authManger.authenticate(new UsernamePasswordAuthenticationToken(loginInfo.getEmail(), loginInfo.getPassword()));
+
+        if(authentication.isAuthenticated()){
+            return jwtService.generateToken(loginInfo.getEmail());
+        }
+        return "fail";
     }
 }

@@ -1,5 +1,6 @@
 package com.example.demo.Controller;
 
+import com.example.demo.Dto.LoginRequest;
 import com.example.demo.Dto.ProfileSubmissionRequest;
 import com.example.demo.Model.Platform;
 import com.example.demo.Model.PlatformStats;
@@ -47,5 +48,10 @@ public class StudentController {
     @PostMapping("/submit")
     public Student submitProfile(@RequestBody ProfileSubmissionRequest request){
         return studentService.submitProfile(request);
+    }
+
+    @PostMapping("/login")
+    public String verify(@RequestBody LoginRequest loginInfo){
+        return studentService.verify(loginInfo);
     }
 }
