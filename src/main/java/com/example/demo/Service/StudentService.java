@@ -8,6 +8,7 @@ import com.example.demo.Model.Student;
 import com.example.demo.Repository.PlatformRepo;
 import com.example.demo.Repository.StudentRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -78,7 +79,7 @@ public class StudentService {
         student.setYear(request.getYear());
         student.setProfilePic(request.getProfilePic());
 
-        if(student.getPassword() == null){
+        if(student.getPassword() == null || student.getPassword().isEmpty()){
             student.setPassword(encoder.encode("default@123"));
         } else {
             student.setPassword(encoder.encode(student.getPassword()));
@@ -103,8 +104,9 @@ public class StudentService {
                 authManger.authenticate(new UsernamePasswordAuthenticationToken(loginInfo.getEmail(), loginInfo.getPassword()));
 
         if(authentication.isAuthenticated()){
+
             return jwtService.generateToken(loginInfo.getEmail());
         }
-        return "fail";
+        return null;
     }
 }
