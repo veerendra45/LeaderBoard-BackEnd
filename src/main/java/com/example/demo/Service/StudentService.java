@@ -71,6 +71,15 @@ public class StudentService {
     }
 
     public Student submitProfile(ProfileSubmissionRequest request) {
+
+        if(studentRepo.existsByEmail(request.getEmail())){
+            throw new IllegalArgumentException("Email already exists");
+        }
+
+        if(studentRepo.existsByRollNumber(request.getRollNumber())){
+            throw new IllegalArgumentException("Roll number already exists");
+        }
+
         Student student = new Student();
         student.setFullName(request.getFullName());
         student.setRollNumber(request.getRollNumber());
@@ -101,7 +110,7 @@ public class StudentService {
 
     public String verify(LoginRequest loginInfo) {
         Authentication authentication =
-                authManger.authenticate(new UsernamePasswordAuthenticationToken(loginInfo.getEmail(), loginInfo.getPassword()));
+                authManger.authenticate(new UsernamePasswordAuthenticationToken(loginInfo.getEmail().trim(), loginInfo.getPassword().trim()));
 
         if(authentication.isAuthenticated()){
 
