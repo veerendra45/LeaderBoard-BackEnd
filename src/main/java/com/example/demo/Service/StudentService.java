@@ -2,6 +2,7 @@ package com.example.demo.Service;
 
 import com.example.demo.Dto.LoginRequest;
 import com.example.demo.Dto.ProfileSubmissionRequest;
+import com.example.demo.Dto.StudentResponse;
 import com.example.demo.Model.Platform;
 import com.example.demo.Model.PlatformStats;
 import com.example.demo.Model.Student;
@@ -17,7 +18,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
@@ -42,10 +46,44 @@ public class StudentService {
         return studentRepo.findAll();
     }
 
-    public Student getById(long id) {
+    public StudentResponse getById(long id) {
         return studentRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Invalid Id Student not found"));
+                .map(this::toResponse)
+                .orElse(null);
     }
+
+    private StudentResponse toResponse(Student student) {
+        StudentResponse response = new StudentResponse();
+        response.setId(student.getId());
+        response.setFullName(student.getFullName());
+        response.setRollNumber(student.getRollNumber());
+        response.setYear(student.getYear());
+        response.setDepartment(student.getDepartment());
+        response.setProfilePicture(student.getProfilePic());
+
+        // Map platforms
+        if(student.getPlatforms() != null && !student.getPlatforms().isEmpty()) {
+            Map<String, String> platformsMap = new HashMap<>();
+            for (Platform p : student.getPlatforms()) {
+                platformsMap.put(p.getName().toLowerCase(), p.getProfileUrl());
+            }
+            response.setPlatforms(platformsMap);
+        }
+
+        // Map platform stats
+        if(student.getPlatformStats() != null) {
+            Map<String, Integer> statsMap = new HashMap<>();
+            PlatformStats stats = student.getPlatformStats();
+            statsMap.put("easy", stats.getEasy());
+            statsMap.put("medium", stats.getMedium());
+            statsMap.put("hard", stats.getHard());
+            statsMap.put("totalScore", stats.getTotalScore());
+            response.setPlatformStats(statsMap);
+        }
+
+        return response;
+    }
+
 
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
     public Student saveStudent(Student student) {

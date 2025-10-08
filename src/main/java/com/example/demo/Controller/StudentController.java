@@ -2,9 +2,11 @@ package com.example.demo.Controller;
 
 import com.example.demo.Dto.LoginRequest;
 import com.example.demo.Dto.ProfileSubmissionRequest;
+import com.example.demo.Dto.StudentResponse;
 import com.example.demo.Model.Platform;
 import com.example.demo.Model.PlatformStats;
 import com.example.demo.Model.Student;
+import com.example.demo.Service.EmailService;
 import com.example.demo.Service.StudentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +20,11 @@ import java.util.Map;
 public class StudentController {
 
     private final StudentService studentService;
+    private final EmailService emailService;
 
-    StudentController(StudentService studentService){
+    StudentController(StudentService studentService, EmailService emailService){
         this.studentService = studentService;
+        this.emailService = emailService;
     }
 
     @GetMapping
@@ -29,7 +33,7 @@ public class StudentController {
     }
 
     @GetMapping("/{id}")
-    public Student getById(@PathVariable long id){
+    public StudentResponse getById(@PathVariable long id){
         return studentService.getById(id);
     }
 
@@ -50,7 +54,18 @@ public class StudentController {
 
     @PostMapping("/submit")
     public Student submitProfile(@RequestBody ProfileSubmissionRequest request){
-        return studentService.submitProfile(request);
+        Student savedStudent = studentService.submitProfile(request);
+
+        if(savedStudent.getEmail() != null){
+            String subject = "Welcome to DSA Leaderboard 🎉";
+            String body = "Hi " + savedStudent.getFullName() + ",\n\n"
+                    + "Your profile has been submitted successfully!\n"
+                    + "Keep practicing and track your progress on our leaderboard.\n\n"
+                    + "Best,\nThe DSA Leaderboard Team";
+
+            emailService.sendEmail(savedStudent.getEmail(), subject, body);
+        }
+        return savedStudent;
     }
 
     @PostMapping("/login")
