@@ -11,5 +11,4 @@ public class LeaderBoardBackEndApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(LeaderBoardBackEndApplication.class, args);
 	}
-
 }
